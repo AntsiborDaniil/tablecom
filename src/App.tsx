@@ -396,6 +396,11 @@ function App() {
     'min-h-11 py-2.5 text-base md:min-h-8 md:py-1 md:text-sm'
   const touchSelectTrigger =
     'min-h-11 w-full justify-between bg-background py-2.5 text-base shadow-sm data-[size=default]:h-auto md:min-h-8 md:py-2 md:text-sm'
+  const dictionariesReady =
+    payboxes.length > 0 &&
+    organizations.length > 0 &&
+    warehouses.length > 0 &&
+    priceTypes.length > 0
   const findButtonClass =
     'min-h-11 shrink-0 border-input bg-background text-base shadow-sm transition-all hover:border-muted-foreground/35 hover:bg-muted hover:text-foreground hover:shadow active:scale-[0.99] sm:min-w-[7rem]'
 
@@ -521,21 +526,32 @@ function App() {
             <CardTitle className="text-base">3. Параметры продажи</CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
+            {!dictionariesReady && (
+              <p className="rounded-md border border-amber-500/40 bg-amber-500/10 px-3 py-2 text-sm text-amber-900 dark:text-amber-100">
+                Справочники еще не загружены. Нажмите «Загрузить справочники» в блоке токена.
+              </p>
+            )}
             <div className="space-y-2">
               <Label>Счет</Label>
               <Select
                 value={selectedPayboxId}
                 onValueChange={(value) => setSelectedPayboxId(value ?? '')}
               >
-                <SelectTrigger className={touchSelectTrigger}>
+                <SelectTrigger className={touchSelectTrigger} disabled={payboxes.length === 0}>
                   <SelectValue placeholder="Выберите счет" />
                 </SelectTrigger>
                 <SelectContent>
-                  {payboxes.map((paybox) => (
-                    <SelectItem key={paybox.id} value={String(paybox.id)}>
-                      {paybox.name ?? `Счет ${paybox.id}`}
+                  {payboxes.length > 0 ? (
+                    payboxes.map((paybox) => (
+                      <SelectItem key={paybox.id} value={String(paybox.id)}>
+                        {paybox.name ?? `Счет ${paybox.id}`}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="__empty_paybox" disabled>
+                      Нет доступных счетов
                     </SelectItem>
-                  ))}
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -546,15 +562,24 @@ function App() {
                 value={selectedOrganizationId}
                 onValueChange={(value) => setSelectedOrganizationId(value ?? '')}
               >
-                <SelectTrigger className={touchSelectTrigger}>
+                <SelectTrigger
+                  className={touchSelectTrigger}
+                  disabled={organizations.length === 0}
+                >
                   <SelectValue placeholder="Выберите организацию" />
                 </SelectTrigger>
                 <SelectContent>
-                  {organizations.map((organization) => (
-                    <SelectItem key={organization.id} value={String(organization.id)}>
-                      {organization.short_name || organization.name || `Организация ${organization.id}`}
+                  {organizations.length > 0 ? (
+                    organizations.map((organization) => (
+                      <SelectItem key={organization.id} value={String(organization.id)}>
+                        {organization.short_name || organization.name || `Организация ${organization.id}`}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="__empty_org" disabled>
+                      Нет доступных организаций
                     </SelectItem>
-                  ))}
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -565,15 +590,24 @@ function App() {
                 value={selectedWarehouseId}
                 onValueChange={(value) => setSelectedWarehouseId(value ?? '')}
               >
-                <SelectTrigger className={touchSelectTrigger}>
+                <SelectTrigger
+                  className={touchSelectTrigger}
+                  disabled={warehouses.length === 0}
+                >
                   <SelectValue placeholder="Выберите склад" />
                 </SelectTrigger>
                 <SelectContent>
-                  {warehouses.map((warehouse) => (
-                    <SelectItem key={warehouse.id} value={String(warehouse.id)}>
-                      {warehouse.name ?? `Склад ${warehouse.id}`}
+                  {warehouses.length > 0 ? (
+                    warehouses.map((warehouse) => (
+                      <SelectItem key={warehouse.id} value={String(warehouse.id)}>
+                        {warehouse.name ?? `Склад ${warehouse.id}`}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="__empty_warehouse" disabled>
+                      Нет доступных складов
                     </SelectItem>
-                  ))}
+                  )}
                 </SelectContent>
               </Select>
             </div>
@@ -584,15 +618,21 @@ function App() {
                 value={selectedPriceTypeId}
                 onValueChange={(value) => setSelectedPriceTypeId(value ?? '')}
               >
-                <SelectTrigger className={touchSelectTrigger}>
+                <SelectTrigger className={touchSelectTrigger} disabled={priceTypes.length === 0}>
                   <SelectValue placeholder="Выберите тип цен" />
                 </SelectTrigger>
                 <SelectContent>
-                  {priceTypes.map((priceType) => (
-                    <SelectItem key={priceType.id} value={String(priceType.id)}>
-                      {priceType.name ?? `Тип цен ${priceType.id}`}
+                  {priceTypes.length > 0 ? (
+                    priceTypes.map((priceType) => (
+                      <SelectItem key={priceType.id} value={String(priceType.id)}>
+                        {priceType.name ?? `Тип цен ${priceType.id}`}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="__empty_price_type" disabled>
+                      Нет доступных типов цен
                     </SelectItem>
-                  ))}
+                  )}
                 </SelectContent>
               </Select>
             </div>
